@@ -1,0 +1,5 @@
+# POT file for Price Drop Notifier
+msgid ""
+msgstr ""
+"Project-Id-Version: Price Drop Notifier 1.0.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
