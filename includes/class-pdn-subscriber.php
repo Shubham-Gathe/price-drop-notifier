@@ -8,7 +8,7 @@ class PDN_Subscriber {
         $table = $wpdb->prefix . 'price_drop_notifier';
         if (!self::exists($email, $product_id)) {
             $wpdb->insert($table, [
-                'email' => $email,
+                'user_email' => $email,
                 'product_id' => $product_id,
             ]);
             return true;
@@ -23,7 +23,7 @@ class PDN_Subscriber {
         global $wpdb;
         $table = $wpdb->prefix . 'price_drop_notifier';
         $result = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM $table WHERE email = %s AND product_id = %d",
+            "SELECT COUNT(*) FROM $table WHERE user_email = %s AND product_id = %d",
             $email, $product_id
         ));
         return $result > 0;
@@ -36,7 +36,7 @@ class PDN_Subscriber {
         global $wpdb;
         $table = $wpdb->prefix . 'price_drop_notifier';
         return $wpdb->get_results($wpdb->prepare(
-            "SELECT email FROM $table WHERE product_id = %d",
+            "SELECT user_email FROM $table WHERE product_id = %d",
             $product_id
         ));
     }

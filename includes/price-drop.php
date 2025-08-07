@@ -9,6 +9,7 @@ function pdn_check_price_drop_on_save($post_id, $post, $update) {
     if (!$update) return;
     $new_price = get_post_meta($post_id, '_regular_price', true);
     $old_price = get_post_meta($post_id, '_pdn_last_price', true);
+    
     if ($old_price && floatval($new_price) < floatval($old_price)) {
         pdn_send_price_drop_notifications($post_id, $old_price, $new_price);
     }

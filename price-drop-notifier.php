@@ -19,7 +19,6 @@ define( 'PDN_URL', plugin_dir_url( __FILE__ ) );
 
 // Includes
 require_once PDN_PATH . 'includes/functions.php';
-require_once PDN_PATH . 'includes/class-pdn-core.php';
 require_once PDN_PATH . 'includes/class-db.php';
 require_once PDN_PATH . 'includes/form-handler.php';
 require_once PDN_PATH . 'includes/price-drop.php';
@@ -37,3 +36,42 @@ add_action( 'plugins_loaded', function() {
         } );
     }
 });
+ add_action('woocommerce_after_add_to_cart_form','pdn_show_subscription_form');
+
+    /**
+     * Show the subscription form for price drop notifications.
+     */
+    function pdn_show_subscription_form(){
+        if (!is_product()) return;
+
+        ?>
+        <form id="pdn-subscribe-form">
+            <p>
+                <label for="pdn_email">Get notified when price drops:</label><br>
+                <input type="email" name="pdn_email" id="pdn_email" required placeholder="Enter your email">
+            </p>
+            <button type="submit">Notify Me</button>
+            <p id="pdn-message" style="margin-top: 10px;"></p>
+        </form>
+        <script>
+            document.getElementById('pdn-subscribe-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const email = document.getElementById('pdn_email').value;
+
+                const response = await fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: 'pdn_subscribe',
+                        email: email,
+                        product_id: '<?php echo get_the_ID(); ?>'
+                    })
+                });
+
+                const result = await response.text();
+                document.getElementById('pdn-message').innerText = result;
+            });
+        </script>
+        <?php
+    }
+
