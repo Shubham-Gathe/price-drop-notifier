@@ -40,4 +40,28 @@ class PDN_Subscriber {
             $product_id
         ));
     }
+
+    /**
+     * Add a subscriber with advanced options.
+     */
+    public static function add_advanced($args) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'price_drop_notifier';
+        $data = [
+            'user_email' => $args['email'],
+            'product_id' => $args['product_id'],
+        ];
+        if (isset($args['desired_price'])) {
+            $data['desired_price'] = $args['desired_price'];
+        }
+        // Store percentage in current_price if needed (or add a new column if you want to extend the DB)
+        if (isset($args['desired_price_percentage'])) {
+            $data['current_price'] = $args['desired_price_percentage'];
+        }
+        if (!self::exists($args['email'], $args['product_id'])) {
+            $wpdb->insert($table, $data);
+            return true;
+        }
+        return false;
+    }
 }
