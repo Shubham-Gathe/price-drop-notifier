@@ -17,11 +17,23 @@ define( 'PDN_VERSION', '1.0.0' );
 define( 'PDN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'PDN_URL', plugin_dir_url( __FILE__ ) );
 
-// Includes
+// Enqueue the plugin's CSS file
+function pdn_enqueue_styles() {
+    wp_enqueue_style(
+        'pdn-style', // Handle for the stylesheet
+        plugin_dir_url(__FILE__) . 'public/css/style.css', // Path to the CSS file
+        [], // Dependencies (none in this case)
+        '1.0.0' // Version number
+    );
+}
+add_action('wp_enqueue_scripts', 'pdn_enqueue_styles');
+
+// Includes 
 require_once PDN_PATH . 'includes/functions.php';
 require_once PDN_PATH . 'includes/class-db.php';
 require_once PDN_PATH . 'includes/form-handler.php';
 require_once PDN_PATH . 'includes/price-drop.php';
+require_once PDN_PATH . 'includes/shortcodes.php';
 
 // Activation hook for DB table
 register_activation_hook(__FILE__, ['PDN_DB', 'create_table']);

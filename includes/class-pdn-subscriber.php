@@ -19,13 +19,24 @@ class PDN_Subscriber {
     /**
      * Check if a subscriber already exists for a product.
      */
-    public static function exists($email, $product_id) {
+    public static function exists($email, $product_id, $user_id = null) {
         global $wpdb;
         $table = $wpdb->prefix . 'price_drop_notifier';
-        $result = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM $table WHERE user_email = %s AND product_id = %d",
-            $email, $product_id
-        ));
+
+        if ($user_id) {
+            // Check by user_id if the user is logged in
+            $result = $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM $table WHERE user_id = %d AND product_id = %d",
+                $user_id, $product_id
+            ));
+        } else {
+            // Fallback to check by email for guest users
+            $result = $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM $table WHERE user_email = %s AND product_id = %d",
+                $email, $product_id
+            ));
+        }
+
         return $result > 0;
     }
 
@@ -50,6 +61,7 @@ class PDN_Subscriber {
         $data = [
             'user_email' => $args['email'],
             'product_id' => $args['product_id'],
+            'user_id' => isset($args['user_id']) ? $args['user_id'] : null, // Optional user ID
         ];
         if (isset($args['desired_price'])) {
             $data['desired_price'] = $args['desired_price'];
@@ -58,7 +70,7 @@ class PDN_Subscriber {
         if (isset($args['desired_price_percentage'])) {
             $data['current_price'] = $args['desired_price_percentage'];
         }
-        if (!self::exists($args['email'], $args['product_id'])) {
+        if (!self::exists($args['email'], $args['product_id'], $args['user_id'] ?? null)) {
             $wpdb->insert($table, $data);
             return true;
         }

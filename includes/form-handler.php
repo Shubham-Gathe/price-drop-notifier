@@ -59,7 +59,9 @@ function pdn_handle_subscription() {
     // Handle expected price logic
     $args = [
         'email' => $email,
-        'product_id' => $product_id
+        'product_id' => $product_id,
+        'user_id' => is_user_logged_in() ? get_current_user_id() : null // Add user ID if logged in
+
     ];
     if ($ask_expected_price === 'yes') {
         if ($expected_price_type === 'custom') {
@@ -75,7 +77,7 @@ function pdn_handle_subscription() {
         }
     }
 
-    if (PDN_Subscriber::exists($email, $product_id)) {
+    if (PDN_Subscriber::exists($email, $product_id, $args['user_id'])) {
         echo "You're already subscribed!";
     } else {
         $inserted = PDN_Subscriber::add_advanced($args);

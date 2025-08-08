@@ -18,9 +18,10 @@ class PDN_DB {
 
         $charset_collate = $wpdb->get_charset_collate();
 
-        $sql = "CREATE TABLE " . self::$table_name . " (
+       $sql = "CREATE TABLE " . self::$table_name . " (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             user_email VARCHAR(255) NOT NULL,
+            user_id BIGINT UNSIGNED DEFAULT NULL,
             product_id BIGINT UNSIGNED NOT NULL,
             desired_price DECIMAL(10, 2) DEFAULT NULL,
             current_price DECIMAL(10, 2) DEFAULT NULL,
@@ -28,8 +29,10 @@ class PDN_DB {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY  (id),
             KEY product_id (product_id),
-            KEY user_email (user_email)
+            KEY user_email (user_email),
+            KEY user_id (user_id)
         ) $charset_collate;";
+
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
